@@ -16,9 +16,7 @@ type AuditsCmd struct {
 type AuditsListCmd struct{}
 
 func (cmd *AuditsListCmd) Run(ctx context.Context) error {
-	fmt.Fprintln(os.Stderr, "Listing all audits is not supported by the Surfer API. Use 'surfer-cli audits get <id>' to retrieve a specific audit.")
-	os.Exit(1)
-	return nil
+	return fmt.Errorf("listing all audits is not supported by the Surfer API; use 'surfer-cli audits create <url>' to create a new audit")
 }
 
 type AuditsCreateCmd struct {
