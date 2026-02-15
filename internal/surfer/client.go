@@ -33,7 +33,7 @@ func NewClient(apiKey string) *Client {
 
 // ContentEditor represents a Surfer content editor.
 type ContentEditor struct {
-	ID       string   `json:"id"`
+	ID       int      `json:"id"`
 	Keywords []string `json:"keywords,omitempty"`
 	Language string   `json:"language,omitempty"`
 	Location string   `json:"location,omitempty"`
@@ -65,7 +65,7 @@ type ContentEditorsListResponse struct {
 
 // Audit represents a Surfer audit.
 type Audit struct {
-	ID    string `json:"id"`
+	ID    int    `json:"id"`
 	URL   string `json:"url,omitempty"`
 	State string `json:"state,omitempty"`
 	Score int    `json:"score,omitempty"`
