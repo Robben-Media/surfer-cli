@@ -13,18 +13,13 @@ import (
 	"github.com/builtbyrobben/surfer-cli/internal/outfmt"
 )
 
-const (
-	colorAuto  = "auto"
-	colorNever = "never"
-)
-
 type RootFlags struct {
-	Color          string `help:"Color output: auto|always|never" default:"${color}"`
-	JSON           bool   `help:"Output JSON to stdout (best for scripting)" default:"${json}"`
-	Plain          bool   `help:"Output stable, parseable text to stdout (TSV; no colors)" default:"${plain}"`
-	Force          bool   `help:"Skip confirmations for destructive commands"`
-	NoInput        bool   `help:"Never prompt; fail instead (useful for CI)"`
-	Verbose        bool   `help:"Enable verbose logging"`
+	Color   string `help:"Color output: auto|always|never" default:"${color}"`
+	JSON    bool   `help:"Output JSON to stdout (best for scripting)" default:"${json}"`
+	Plain   bool   `help:"Output stable, parseable text to stdout (TSV; no colors)" default:"${plain}"`
+	Force   bool   `help:"Skip confirmations for destructive commands"`
+	NoInput bool   `help:"Never prompt; fail instead (useful for CI)"`
+	Verbose bool   `help:"Enable verbose logging"`
 }
 
 type CLI struct {

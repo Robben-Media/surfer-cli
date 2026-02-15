@@ -26,17 +26,18 @@ type KeyringStore struct {
 }
 
 const (
-	apiKeyKey              = "api_key"
-	keyringPasswordEnv     = "SURFER_CLI_KEYRING_PASS"
-	keyringBackendEnv      = "SURFER_CLI_KEYRING_BACKEND"
-	keyringOpenTimeout     = 5 * time.Second
+	apiKeyKey          = "api_key"
+	keyringPasswordEnv = "SURFER_CLI_KEYRING_PASS" //nolint:gosec // env var name, not a credential
+	keyringBackendEnv  = "SURFER_CLI_KEYRING_BACKEND"
+	keyringOpenTimeout = 5 * time.Second
 )
 
 var (
-	errMissingAPIKey      = errors.New("missing API key")
-	errNoTTY              = errors.New("no TTY available for keyring file backend password prompt")
+	errMissingAPIKey         = errors.New("missing API key")
+	errMissingSecretKey      = errors.New("missing secret key")
+	errNoTTY                 = errors.New("no TTY available for keyring file backend password prompt")
 	errInvalidKeyringBackend = errors.New("invalid keyring backend")
-	errKeyringTimeout     = errors.New("keyring connection timed out")
+	errKeyringTimeout        = errors.New("keyring connection timed out")
 )
 
 type KeyringBackendInfo struct {
@@ -125,7 +126,7 @@ func openKeyring() (keyring.Keyring, error) {
 	}
 
 	cfg := keyring.Config{
-		ServiceName:             config.AppName,
+		ServiceName:              config.AppName,
 		KeychainTrustApplication: false,
 		AllowedBackends:          backends,
 		FileDir:                  keyringDir,
@@ -219,8 +220,10 @@ func (s *KeyringStore) HasKey() (bool, error) {
 		if errors.Is(err, keyring.ErrKeyNotFound) {
 			return false, nil
 		}
-		return false, err
+
+		return false, fmt.Errorf("check key existence: %w", err)
 	}
+
 	return true, nil
 }
 
@@ -228,7 +231,7 @@ func (s *KeyringStore) HasKey() (bool, error) {
 func GetSecret(key string) ([]byte, error) {
 	key = strings.TrimSpace(key)
 	if key == "" {
-		return nil, errors.New("missing secret key")
+		return nil, errMissingSecretKey
 	}
 
 	ring, err := openKeyring()
@@ -248,7 +251,7 @@ func GetSecret(key string) ([]byte, error) {
 func SetSecret(key string, value []byte) error {
 	key = strings.TrimSpace(key)
 	if key == "" {
-		return errors.New("missing secret key")
+		return errMissingSecretKey
 	}
 
 	ring, err := openKeyring()

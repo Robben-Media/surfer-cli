@@ -2,9 +2,16 @@ package surfer
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/builtbyrobben/surfer-cli/internal/api"
+)
+
+var (
+	errKeywordsRequired = errors.New("keywords are required")
+	errIDRequired       = errors.New("id is required")
+	errURLRequired      = errors.New("url is required")
 )
 
 const defaultBaseURL = "https://app.surferseo.com/api/v1"
@@ -58,10 +65,10 @@ type ContentEditorsListResponse struct {
 
 // Audit represents a Surfer audit.
 type Audit struct {
-	ID     string `json:"id"`
-	URL    string `json:"url,omitempty"`
-	State  string `json:"state,omitempty"`
-	Score  int    `json:"score,omitempty"`
+	ID    string `json:"id"`
+	URL   string `json:"url,omitempty"`
+	State string `json:"state,omitempty"`
+	Score int    `json:"score,omitempty"`
 }
 
 // CreateAuditRequest is the request body for creating an audit.
@@ -97,28 +104,32 @@ func (s *ContentEditorsService) List(ctx context.Context, page, pageSize int) (*
 	if page < 1 {
 		page = 1
 	}
+
 	if pageSize < 1 {
 		pageSize = 10
 	}
 
 	path := fmt.Sprintf("/content_editors?page=%d&page_size=%d", page, pageSize)
+
 	var result ContentEditorsListResponse
 	if err := s.client.Get(ctx, path, &result); err != nil {
 		return nil, fmt.Errorf("list content editors: %w", err)
 	}
+
 	return &result, nil
 }
 
 // Create creates a new content editor.
 func (s *ContentEditorsService) Create(ctx context.Context, req CreateContentEditorRequest) (*ContentEditor, error) {
 	if len(req.Keywords) == 0 {
-		return nil, fmt.Errorf("keywords are required")
+		return nil, errKeywordsRequired
 	}
 
 	// Set defaults
 	if req.Device == "" {
 		req.Device = "desktop"
 	}
+
 	if req.Language == "" {
 		req.Language = "en"
 	}
@@ -127,34 +138,39 @@ func (s *ContentEditorsService) Create(ctx context.Context, req CreateContentEdi
 	if err := s.client.Post(ctx, "/content_editors", req, &result); err != nil {
 		return nil, fmt.Errorf("create content editor: %w", err)
 	}
+
 	return &result, nil
 }
 
 // Get returns a content editor by ID.
 func (s *ContentEditorsService) Get(ctx context.Context, id string) (*ContentEditor, error) {
 	if id == "" {
-		return nil, fmt.Errorf("id is required")
+		return nil, errIDRequired
 	}
 
 	var result ContentEditor
+
 	path := fmt.Sprintf("/content_editors/%s", id)
 	if err := s.client.Get(ctx, path, &result); err != nil {
 		return nil, fmt.Errorf("get content editor: %w", err)
 	}
+
 	return &result, nil
 }
 
 // Score returns the content score for a content editor.
 func (s *ContentEditorsService) Score(ctx context.Context, id string) (*ContentEditorScore, error) {
 	if id == "" {
-		return nil, fmt.Errorf("id is required")
+		return nil, errIDRequired
 	}
 
 	var result ContentEditorScore
+
 	path := fmt.Sprintf("/content_editors/%s/content_score", id)
 	if err := s.client.Get(ctx, path, &result); err != nil {
 		return nil, fmt.Errorf("get content score: %w", err)
 	}
+
 	return &result, nil
 }
 
@@ -168,28 +184,33 @@ func (s *AuditsService) List(ctx context.Context, page, pageSize int) (*AuditsLi
 	if page < 1 {
 		page = 1
 	}
+
 	if pageSize < 1 {
 		pageSize = 10
 	}
 
 	path := fmt.Sprintf("/audits?page=%d&page_size=%d", page, pageSize)
+
 	var result AuditsListResponse
 	if err := s.client.Get(ctx, path, &result); err != nil {
 		return nil, fmt.Errorf("list audits: %w", err)
 	}
+
 	return &result, nil
 }
 
 // Create creates a new audit for a URL.
 func (s *AuditsService) Create(ctx context.Context, url string) (*Audit, error) {
 	if url == "" {
-		return nil, fmt.Errorf("url is required")
+		return nil, errURLRequired
 	}
 
 	req := CreateAuditRequest{URL: url}
+
 	var result Audit
 	if err := s.client.Post(ctx, "/audits", req, &result); err != nil {
 		return nil, fmt.Errorf("create audit: %w", err)
 	}
+
 	return &result, nil
 }
