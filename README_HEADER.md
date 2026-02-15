@@ -1,1 +1,1 @@
-# CLI Template
+# Surfer CLI

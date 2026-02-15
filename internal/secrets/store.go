@@ -11,7 +11,7 @@ import (
 	"github.com/99designs/keyring"
 	"golang.org/x/term"
 
-	"github.com/builtbyrobben/cli-template/internal/config"
+	"github.com/builtbyrobben/surfer-cli/internal/config"
 )
 
 type Store interface {
@@ -27,8 +27,8 @@ type KeyringStore struct {
 
 const (
 	apiKeyKey              = "api_key"
-	keyringPasswordEnv     = "PLACEHOLDER_CLI_KEYRING_PASS"
-	keyringBackendEnv      = "PLACEHOLDER_CLI_KEYRING_BACKEND"
+	keyringPasswordEnv     = "SURFER_CLI_KEYRING_PASS"
+	keyringBackendEnv      = "SURFER_CLI_KEYRING_BACKEND"
 	keyringOpenTimeout     = 5 * time.Second
 )
 
@@ -166,7 +166,7 @@ func openKeyringWithTimeout(cfg keyring.Config, timeout time.Duration) (keyring.
 		return res.ring, nil
 	case <-time.After(timeout):
 		return nil, fmt.Errorf("%w after %v (D-Bus SecretService may be unresponsive); "+
-			"set PLACEHOLDER_CLI_KEYRING_BACKEND=file and PLACEHOLDER_CLI_KEYRING_PASS=<password> to use encrypted file storage instead",
+			"set SURFER_CLI_KEYRING_BACKEND=file and SURFER_CLI_KEYRING_PASS=<password> to use encrypted file storage instead",
 			errKeyringTimeout, timeout)
 	}
 }

@@ -1,4 +1,4 @@
-module github.com/builtbyrobben/cli-template
+module github.com/builtbyrobben/surfer-cli
 
 go 1.22.0
 

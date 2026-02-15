@@ -81,9 +81,9 @@ func (c *Client) Do(ctx context.Context, req Request) (*http.Response, error) {
 	httpReq.Header.Set("Content-Type", "application/json")
 	httpReq.Header.Set("User-Agent", c.userAgent)
 
-	// Set API key header (override in specific CLI implementations)
+	// Set API key header (Surfer uses custom API-KEY header, not Bearer)
 	if c.apiKey != "" {
-		httpReq.Header.Set("Authorization", "Bearer "+c.apiKey)
+		httpReq.Header.Set("API-KEY", c.apiKey)
 	}
 
 	// Set custom headers

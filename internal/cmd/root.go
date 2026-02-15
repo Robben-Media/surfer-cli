@@ -9,8 +9,8 @@ import (
 
 	"github.com/alecthomas/kong"
 
-	"github.com/builtbyrobben/cli-template/internal/errfmt"
-	"github.com/builtbyrobben/cli-template/internal/outfmt"
+	"github.com/builtbyrobben/surfer-cli/internal/errfmt"
+	"github.com/builtbyrobben/surfer-cli/internal/outfmt"
 )
 
 const (
@@ -32,6 +32,8 @@ type CLI struct {
 
 	Version    kong.VersionFlag `help:"Print version and exit"`
 	Auth       AuthCmd          `cmd:"" help:"Auth and credentials"`
+	Editors    EditorsCmd       `cmd:"" help:"Content Editor operations"`
+	Audits     AuditsCmd        `cmd:"" help:"Audit operations"`
 	VersionCmd VersionCmd       `cmd:"" name:"version" help:"Print version"`
 }
 
@@ -118,9 +120,9 @@ func boolString(v bool) string {
 }
 
 func newParser(description string) (*kong.Kong, *CLI, error) {
-	envMode := outfmt.FromEnv("PLACEHOLDER_CLI")
+	envMode := outfmt.FromEnv("SURFER_CLI")
 	vars := kong.Vars{
-		"color":   envOr("PLACEHOLDER_CLI_COLOR", "auto"),
+		"color":   envOr("SURFER_CLI_COLOR", "auto"),
 		"json":    boolString(envMode.JSON),
 		"plain":   boolString(envMode.Plain),
 		"version": VersionString(),
@@ -129,7 +131,7 @@ func newParser(description string) (*kong.Kong, *CLI, error) {
 	cli := &CLI{}
 	parser, err := kong.New(
 		cli,
-		kong.Name("placeholder-cli"),
+		kong.Name("surfer-cli"),
 		kong.Description(description),
 		kong.ConfigureHelp(kong.HelpOptions{
 			Compact: true,
@@ -146,7 +148,7 @@ func newParser(description string) (*kong.Kong, *CLI, error) {
 }
 
 func helpDescription() string {
-	return "Placeholder CLI - Replace with your service description"
+	return "Surfer SEO CLI - Content optimization and SEO audits"
 }
 
 // newUsageError wraps errors in a way main() can map to exit code 2.

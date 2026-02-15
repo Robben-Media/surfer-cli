@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-const AppName = "placeholder-cli"
+const AppName = "surfer-cli"
 
 var (
 	ErrConfigDir = errors.New("config directory error")

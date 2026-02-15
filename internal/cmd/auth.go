@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/builtbyrobben/cli-template/internal/outfmt"
-	"github.com/builtbyrobben/cli-template/internal/secrets"
+	"github.com/builtbyrobben/surfer-cli/internal/outfmt"
+	"github.com/builtbyrobben/surfer-cli/internal/secrets"
 	"golang.org/x/term"
 )
 
@@ -88,7 +88,7 @@ func (cmd *AuthStatusCmd) Run(ctx context.Context) error {
 	}
 
 	// Check environment variable override
-	envKey := os.Getenv("PLACEHOLDER_CLI_API_KEY")
+	envKey := os.Getenv("SURFER_API_KEY")
 	envOverride := envKey != ""
 
 	status := map[string]any{
@@ -112,7 +112,7 @@ func (cmd *AuthStatusCmd) Run(ctx context.Context) error {
 	// Human-readable output
 	fmt.Fprintf(os.Stderr, "Storage: %s\n", status["storage_backend"])
 	if envOverride {
-		fmt.Fprintln(os.Stderr, "Status: Using PLACEHOLDER_CLI_API_KEY environment variable")
+		fmt.Fprintln(os.Stderr, "Status: Using SURFER_API_KEY environment variable")
 	} else if hasKey {
 		fmt.Fprintln(os.Stderr, "Status: Authenticated")
 		if redacted, ok := status["key_redacted"].(string); ok {
@@ -120,7 +120,7 @@ func (cmd *AuthStatusCmd) Run(ctx context.Context) error {
 		}
 	} else {
 		fmt.Fprintln(os.Stderr, "Status: Not authenticated")
-		fmt.Fprintln(os.Stderr, "Run: placeholder-cli auth set-key --stdin")
+		fmt.Fprintln(os.Stderr, "Run: surfer-cli auth set-key --stdin")
 	}
 
 	return nil
