@@ -38,6 +38,17 @@ func (cmd *EditorsListCmd) Run(ctx context.Context) error {
 		return outfmt.WriteJSON(os.Stdout, result)
 	}
 
+	if outfmt.IsPlain(ctx) {
+		headers := []string{"ID", "KEYWORDS", "STATE", "LANGUAGE"}
+
+		var rows [][]string
+		for _, editor := range result.Data {
+			rows = append(rows, []string{fmt.Sprintf("%d", editor.ID), strings.Join(editor.Keywords, ","), editor.State, editor.Language})
+		}
+
+		return outfmt.WritePlain(os.Stdout, headers, rows)
+	}
+
 	if len(result.Data) == 0 {
 		fmt.Fprintln(os.Stderr, "No content editors found")
 		return nil
@@ -95,6 +106,13 @@ func (cmd *EditorsCreateCmd) Run(ctx context.Context) error {
 		return outfmt.WriteJSON(os.Stdout, result)
 	}
 
+	if outfmt.IsPlain(ctx) {
+		headers := []string{"ID", "KEYWORDS", "URL"}
+		rows := [][]string{{fmt.Sprintf("%d", result.ID), strings.Join(result.Keywords, ","), result.URL}}
+
+		return outfmt.WritePlain(os.Stdout, headers, rows)
+	}
+
 	fmt.Fprintf(os.Stderr, "Created content editor\n\n")
 	fmt.Printf("ID: %d\n", result.ID)
 	if len(result.Keywords) > 0 {
@@ -124,6 +142,13 @@ func (cmd *EditorsGetCmd) Run(ctx context.Context) error {
 
 	if outfmt.IsJSON(ctx) {
 		return outfmt.WriteJSON(os.Stdout, result)
+	}
+
+	if outfmt.IsPlain(ctx) {
+		headers := []string{"ID", "KEYWORDS", "STATE", "LANGUAGE", "DEVICE", "URL"}
+		rows := [][]string{{fmt.Sprintf("%d", result.ID), strings.Join(result.Keywords, ","), result.State, result.Language, result.Device, result.URL}}
+
+		return outfmt.WritePlain(os.Stdout, headers, rows)
 	}
 
 	fmt.Printf("ID: %d\n", result.ID)
@@ -166,6 +191,13 @@ func (cmd *EditorsScoreCmd) Run(ctx context.Context) error {
 
 	if outfmt.IsJSON(ctx) {
 		return outfmt.WriteJSON(os.Stdout, result)
+	}
+
+	if outfmt.IsPlain(ctx) {
+		headers := []string{"CONTENT_SCORE"}
+		rows := [][]string{{fmt.Sprintf("%d", result.ContentScore)}}
+
+		return outfmt.WritePlain(os.Stdout, headers, rows)
 	}
 
 	fmt.Printf("Content Score: %d\n", result.ContentScore)
