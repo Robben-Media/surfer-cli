@@ -32,8 +32,8 @@ func TestContentEditors_List(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(ContentEditorsListResponse{
 			Data: []ContentEditor{
-				{ID: "ce-1", Keywords: []string{"seo"}, State: "ready"},
-				{ID: "ce-2", Keywords: []string{"content"}, State: "processing"},
+				{ID: 1, Keywords: []string{"seo"}, State: "ready"},
+				{ID: 2, Keywords: []string{"content"}, State: "processing"},
 			},
 			Page:       1,
 			PageSize:   10,
@@ -53,8 +53,8 @@ func TestContentEditors_List(t *testing.T) {
 		t.Fatalf("expected 2 editors, got %d", len(result.Data))
 	}
 
-	if result.Data[0].ID != "ce-1" {
-		t.Errorf("expected first editor ID 'ce-1', got %q", result.Data[0].ID)
+	if result.Data[0].ID != 1 {
+		t.Errorf("expected first editor ID 1, got %d", result.Data[0].ID)
 	}
 
 	if result.TotalItems != 2 {
@@ -109,7 +109,7 @@ func TestContentEditors_Create(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(ContentEditor{
-			ID:       "new-ce",
+			ID:       100,
 			Keywords: body.Keywords,
 		})
 	}))
@@ -124,8 +124,8 @@ func TestContentEditors_Create(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if result.ID != "new-ce" {
-		t.Errorf("expected ID 'new-ce', got %q", result.ID)
+	if result.ID != 100 {
+		t.Errorf("expected ID 100, got %d", result.ID)
 	}
 }
 
@@ -146,7 +146,7 @@ func TestContentEditors_Get(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(ContentEditor{
-			ID:       "ce-123",
+			ID:       123,
 			Keywords: []string{"test"},
 			State:    "ready",
 		})
@@ -160,8 +160,8 @@ func TestContentEditors_Get(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if result.ID != "ce-123" {
-		t.Errorf("expected ID 'ce-123', got %q", result.ID)
+	if result.ID != 123 {
+		t.Errorf("expected ID 123, got %d", result.ID)
 	}
 }
 
@@ -215,7 +215,7 @@ func TestAudits_List(t *testing.T) {
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(AuditsListResponse{
 			Data: []Audit{
-				{ID: "a-1", URL: "https://example.com", Score: 72},
+				{ID: 1, URL: "https://example.com", Score: 72},
 			},
 			Page:       1,
 			PageSize:   10,
@@ -255,7 +255,7 @@ func TestAudits_Create(t *testing.T) {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(Audit{
-			ID:    "new-audit",
+			ID:    200,
 			URL:   body.URL,
 			State: "pending",
 		})
@@ -269,8 +269,8 @@ func TestAudits_Create(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if result.ID != "new-audit" {
-		t.Errorf("expected ID 'new-audit', got %q", result.ID)
+	if result.ID != 200 {
+		t.Errorf("expected ID 200, got %d", result.ID)
 	}
 }
 

@@ -45,7 +45,7 @@ func (cmd *EditorsListCmd) Run(ctx context.Context) error {
 
 	fmt.Fprintf(os.Stderr, "Showing %d of %d editors (page %d)\n\n", len(result.Data), result.TotalItems, result.Page)
 	for _, editor := range result.Data {
-		fmt.Printf("ID: %s\n", editor.ID)
+		fmt.Printf("ID: %d\n", editor.ID)
 		if len(editor.Keywords) > 0 {
 			fmt.Printf("  Keywords: %s\n", strings.Join(editor.Keywords, ", "))
 		}
@@ -96,7 +96,7 @@ func (cmd *EditorsCreateCmd) Run(ctx context.Context) error {
 	}
 
 	fmt.Fprintf(os.Stderr, "Created content editor\n\n")
-	fmt.Printf("ID: %s\n", result.ID)
+	fmt.Printf("ID: %d\n", result.ID)
 	if len(result.Keywords) > 0 {
 		fmt.Printf("Keywords: %s\n", strings.Join(result.Keywords, ", "))
 	}
@@ -126,7 +126,7 @@ func (cmd *EditorsGetCmd) Run(ctx context.Context) error {
 		return outfmt.WriteJSON(os.Stdout, result)
 	}
 
-	fmt.Printf("ID: %s\n", result.ID)
+	fmt.Printf("ID: %d\n", result.ID)
 	if len(result.Keywords) > 0 {
 		fmt.Printf("Keywords: %s\n", strings.Join(result.Keywords, ", "))
 	}
