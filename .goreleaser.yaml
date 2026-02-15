@@ -57,3 +57,5 @@ brews:
     homepage: "https://github.com/builtbyrobben/surfer-cli"
     description: "Surfer SEO content optimization CLI"
     license: "MIT"
+    test: |
+      system "#{bin}/surfer-cli", "--version"
