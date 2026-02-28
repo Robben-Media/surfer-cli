@@ -216,6 +216,77 @@ func TestWriteJSON_Indented(t *testing.T) {
 	}
 }
 
+func TestWritePlain(t *testing.T) {
+	var buf bytes.Buffer
+
+	headers := []string{"Name", "Age", "City"}
+	rows := [][]string{
+		{"Alice", "30", "New York"},
+		{"Bob", "25", "London"},
+	}
+
+	err := WritePlain(&buf, headers, rows)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	want := "Name\tAge\tCity\nAlice\t30\tNew York\nBob\t25\tLondon\n"
+	if buf.String() != want {
+		t.Errorf("WritePlain output mismatch\ngot:  %q\nwant: %q", buf.String(), want)
+	}
+}
+
+func TestWritePlain_NoHeaders(t *testing.T) {
+	var buf bytes.Buffer
+
+	rows := [][]string{
+		{"Alice", "30"},
+	}
+
+	err := WritePlain(&buf, nil, rows)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	want := "Alice\t30\n"
+	if buf.String() != want {
+		t.Errorf("WritePlain output mismatch\ngot:  %q\nwant: %q", buf.String(), want)
+	}
+}
+
+func TestWritePlain_SanitizesTabsAndNewlines(t *testing.T) {
+	var buf bytes.Buffer
+
+	headers := []string{"Col\tOne", "Col\nTwo"}
+	rows := [][]string{
+		{"val\tone", "val\ntwo\rthree"},
+	}
+
+	err := WritePlain(&buf, headers, rows)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	want := "Col One\tCol Two\nval one\tval twothree\n"
+	if buf.String() != want {
+		t.Errorf("WritePlain sanitization mismatch\ngot:  %q\nwant: %q", buf.String(), want)
+	}
+}
+
+func TestWritePlain_EmptyRows(t *testing.T) {
+	var buf bytes.Buffer
+
+	err := WritePlain(&buf, []string{"A", "B"}, nil)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	want := "A\tB\n"
+	if buf.String() != want {
+		t.Errorf("WritePlain output mismatch\ngot:  %q\nwant: %q", buf.String(), want)
+	}
+}
+
 func TestKeyValuePayload(t *testing.T) {
 	p := KeyValuePayload("test-key", 42)
 
