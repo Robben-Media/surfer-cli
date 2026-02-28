@@ -38,6 +38,13 @@ func (cmd *AuditsCreateCmd) Run(ctx context.Context) error {
 		return outfmt.WriteJSON(os.Stdout, result)
 	}
 
+	if outfmt.IsPlain(ctx) {
+		headers := []string{"ID", "URL", "STATE"}
+		rows := [][]string{{fmt.Sprintf("%d", result.ID), result.URL, result.State}}
+
+		return outfmt.WritePlain(os.Stdout, headers, rows)
+	}
+
 	fmt.Fprintf(os.Stderr, "Created audit\n\n")
 	fmt.Printf("ID: %d\n", result.ID)
 	if result.URL != "" {

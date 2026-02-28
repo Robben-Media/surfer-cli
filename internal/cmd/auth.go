@@ -75,6 +75,10 @@ func (cmd *AuthSetKeyCmd) Run(ctx context.Context) error {
 		})
 	}
 
+	if outfmt.IsPlain(ctx) {
+		return outfmt.WritePlain(os.Stdout, []string{"STATUS", "MESSAGE"}, [][]string{{"success", "API key stored in keyring"}})
+	}
+
 	fmt.Fprintln(os.Stderr, "API key stored in keyring")
 
 	return nil
@@ -115,20 +119,31 @@ func (cmd *AuthStatusCmd) Run(ctx context.Context) error {
 		return outfmt.WriteJSON(os.Stdout, status)
 	}
 
+	if outfmt.IsPlain(ctx) {
+		headers := []string{"HAS_KEY", "ENV_OVERRIDE", "STORAGE"}
+		rows := [][]string{{
+			fmt.Sprintf("%t", hasKey),
+			fmt.Sprintf("%t", envOverride),
+			"keyring",
+		}}
+
+		return outfmt.WritePlain(os.Stdout, headers, rows)
+	}
+
 	// Human-readable output
-	fmt.Fprintf(os.Stderr, "Storage: %s\n", status["storage_backend"])
+	fmt.Fprintf(os.Stdout, "Storage: %s\n", status["storage_backend"])
 
 	switch {
 	case envOverride:
-		fmt.Fprintln(os.Stderr, "Status: Using SURFER_API_KEY environment variable")
+		fmt.Fprintln(os.Stdout, "Status: Using SURFER_API_KEY environment variable")
 	case hasKey:
-		fmt.Fprintln(os.Stderr, "Status: Authenticated")
+		fmt.Fprintln(os.Stdout, "Status: Authenticated")
 
 		if redacted, ok := status["key_redacted"].(string); ok {
-			fmt.Fprintf(os.Stderr, "Key: %s\n", redacted)
+			fmt.Fprintf(os.Stdout, "Key: %s\n", redacted)
 		}
 	default:
-		fmt.Fprintln(os.Stderr, "Status: Not authenticated")
+		fmt.Fprintln(os.Stdout, "Status: Not authenticated")
 		fmt.Fprintln(os.Stderr, "Run: surfer-cli auth set-key --stdin")
 	}
 
@@ -152,6 +167,10 @@ func (cmd *AuthRemoveCmd) Run(ctx context.Context) error {
 			"status":  "success",
 			"message": "API key removed",
 		})
+	}
+
+	if outfmt.IsPlain(ctx) {
+		return outfmt.WritePlain(os.Stdout, []string{"STATUS", "MESSAGE"}, [][]string{{"success", "API key removed"}})
 	}
 
 	fmt.Fprintln(os.Stderr, "API key removed")
